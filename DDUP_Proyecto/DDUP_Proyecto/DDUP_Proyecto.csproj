@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.7\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.7\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
+  <Import Project="..\packages\Microsoft.NetFramework.Analyzers.2.9.7\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.2.9.7\build\Microsoft.NetFramework.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.NetCore.Analyzers.2.9.7\build\Microsoft.NetCore.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetCore.Analyzers.2.9.7\build\Microsoft.NetCore.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.CodeQuality.Analyzers.2.9.7\build\Microsoft.CodeQuality.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeQuality.Analyzers.2.9.7\build\Microsoft.CodeQuality.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.7\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.7\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" />
+  <Import Project="..\packages\SQLite.3.13.0\build\net45\SQLite.props" Condition="Exists('..\packages\SQLite.3.13.0\build\net45\SQLite.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,6 +18,8 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,8 +41,38 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework.Design, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="MetroFramework.Fonts, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Fonts.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\..\..\..\Unity Projects\DDUP_Project\Assets\Plugins\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite.Designer, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\System.Data.SQLite\2015_2\bin\SQLite.Designer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\System.Data.SQLite\2015_2\bin\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\System.Data.SQLite\2015_2\bin\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\System.Data.SQLite\2015_2\bin\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Speech" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,14 +84,117 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="Biblioteca.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Biblioteca.Designer.cs">
+      <DependentUpon>Biblioteca.cs</DependentUpon>
     </Compile>
+    <Compile Include="Biblioteca2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Biblioteca2.Designer.cs">
+      <DependentUpon>Biblioteca2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Nivel1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Nivel1.Designer.cs">
+      <DependentUpon>Nivel1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Nivel2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Nivel2.Designer.cs">
+      <DependentUpon>Nivel2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Nivel4.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Nivel4.Designer.cs">
+      <DependentUpon>Nivel4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Nivel3.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Nivel3.Designer.cs">
+      <DependentUpon>Nivel3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NivelBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NivelBase.Designer.cs">
+      <DependentUpon>NivelBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Palabras.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Palabras.Designer.cs">
+      <DependentUpon>Palabras.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Colores.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Colores.Designer.cs">
+      <DependentUpon>Colores.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Braille.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Braille.Designer.cs">
+      <DependentUpon>Braille.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Cereal.cs" />
+    <Compile Include="Conexion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Conexion.Designer.cs">
+      <DependentUpon>Conexion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectDB.cs" />
+    <Compile Include="ObjectEntity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistroTarjetas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RegistroTarjetas.Designer.cs">
+      <DependentUpon>RegistroTarjetas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SqliteHelper.cs" />
+    <EmbeddedResource Include="Biblioteca.resx">
+      <DependentUpon>Biblioteca.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Biblioteca2.resx">
+      <DependentUpon>Biblioteca2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Nivel1.resx">
+      <DependentUpon>Nivel1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Nivel2.resx">
+      <DependentUpon>Nivel2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Nivel4.resx">
+      <DependentUpon>Nivel4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Nivel3.resx">
+      <DependentUpon>Nivel3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NivelBase.resx">
+      <DependentUpon>NivelBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Palabras.resx">
+      <DependentUpon>Palabras.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Colores.resx">
+      <DependentUpon>Colores.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Braille.resx">
+      <DependentUpon>Braille.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Conexion.resx">
+      <DependentUpon>Conexion.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -62,7 +203,14 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="RegistroTarjetas.resx">
+      <DependentUpon>RegistroTarjetas.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include=".editorconfig" />
+    <None Include="packages.config" />
+    <None Include="Properties\DataSources\ObjectEntity.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -76,5 +224,79 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Images\image-placeholder.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\Images\20020.png" />
+    <None Include="Resources\Papa.jpg" />
+    <None Include="Resources\Mama.jpg" />
+    <None Include="Resources\Hermano.jpg" />
+    <None Include="Resources\Hermana.jpg" />
+    <None Include="Resources\Abuelo.jpg" />
+    <None Include="Resources\Abuela.jpg" />
+    <None Include="Resources\Clap.wav" />
+    <None Include="Resources\icons8-izquierda-en-círculo-2-32.png" />
+    <None Include="Resources\Dada 2.wav" />
+    <None Include="Resources\Border.wav" />
+    <None Include="Resources\Bing.wav" />
+    <None Include="Resources\News.wav" />
+    <None Include="Resources\Home.wav" />
+    <None Include="Resources\Dada 1.wav" />
+    <None Include="Resources\Error.wav" />
+    <None Include="Resources\Select.wav" />
+    <None Include="Resources\Popup + Run Title.wav" />
+    <None Include="Resources\Enter &amp; Back.wav" />
+    <None Include="Resources\icons8-lápiz-96.png" />
+    <None Include="Resources\Victory.wav" />
+    <None Include="Resources\icons8-círculo-80_I.png" />
+    <None Include="Resources\icons8-círculo-80.png" />
+    <None Include="Resources\icons8-omitir-32 %281%29.png" />
+    <None Include="Resources\icons8-omitir-32.png" />
+    <None Include="Resources\icons8-omitir-96 %281%29.png" />
+    <None Include="Resources\icons8-omitir-96.png" />
+    <None Include="Resources\icons8-braille-96.png" />
+    <None Include="Resources\icons8-braille-64.png" />
+    <None Include="Resources\Login.wav" />
+    <None Include="Resources\Notification Alert.wav" />
+    <None Include="Resources\icons8-stop-circled-32 %281%29.png" />
+    <None Include="Resources\icons8-circled-play-32 %281%29.png" />
+    <None Include="Resources\icons8-circled-play-32.png" />
+    <None Include="Resources\icons8-stop-circled-32.png" />
+    <None Include="Resources\icons8-page-32.png" />
+    <None Include="Resources\icons8-full-image-32.png" />
+    <None Include="Resources\icons8-speaker-32.png" />
+    <None Include="Resources\icons8-delete-trash-32.png" />
+    <None Include="Resources\icons8-back-arrow-32.png" />
+    <None Include="Resources\icons8-back-arrow-96 %281%29.png" />
+    <None Include="Resources\icons8-back-arrow-96.png" />
+    <None Include="Resources\icons8-book-stack-96.png" />
+    <None Include="Resources\icons8-edit-user-96.png" />
+    <None Include="Resources\icons8-soccer-yellow-card-96.png" />
+    <None Include="Resources\back.bmp" />
+    <None Include="Resources\20020.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.7\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.7\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.2.9.7\analyzers\dotnet\cs\Humanizer.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.CodeQuality.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SQLite.3.13.0\build\net45\SQLite.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLite.3.13.0\build\net45\SQLite.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.7\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.7\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeQuality.Analyzers.2.9.7\build\Microsoft.CodeQuality.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeQuality.Analyzers.2.9.7\build\Microsoft.CodeQuality.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.NetCore.Analyzers.2.9.7\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetCore.Analyzers.2.9.7\build\Microsoft.NetCore.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.2.9.7\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.2.9.7\build\Microsoft.NetFramework.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.7\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.2.9.7\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
+  </Target>
 </Project>

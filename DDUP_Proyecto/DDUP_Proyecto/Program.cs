@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DDUP_Proyecto
@@ -16,7 +13,13 @@ namespace DDUP_Proyecto
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            //Application.Run(new Biblioteca2());
+
+            /* */
+            var main_form = new Conexion();
+            main_form.Show();
+            Application.Run();
+            /**/
         }
     }
 }

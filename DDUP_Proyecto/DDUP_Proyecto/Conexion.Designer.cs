@@ -156,6 +156,7 @@
             this.metroTile1.UseCustomForeColor = true;
             this.metroTile1.UseSelectable = true;
             this.metroTile1.UseTileImage = true;
+            this.metroTile1.Visible = false;
             this.metroTile1.Click += new System.EventHandler(this.metroTile1_Click_1);
             // 
             // tileTarjeta
@@ -190,6 +191,7 @@
             this.tileBiblioteca.UseCustomForeColor = true;
             this.tileBiblioteca.UseSelectable = true;
             this.tileBiblioteca.UseTileImage = true;
+            this.tileBiblioteca.Visible = false;
             this.tileBiblioteca.Click += new System.EventHandler(this.metroTile1_Click);
             // 
             // tileAlumno

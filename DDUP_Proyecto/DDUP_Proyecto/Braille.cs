@@ -1,12 +1,13 @@
-﻿using MetroFramework;
-using MetroFramework.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Media;
 using System.Speech.Synthesis;
 using System.Windows.Forms;
+using DDUP_Proyecto.Properties;
+using MetroFramework;
+using MetroFramework.Forms;
 
 namespace DDUP_Proyecto
 {
@@ -21,37 +22,36 @@ namespace DDUP_Proyecto
 
         // Inicializar variables
 
-        Cereal sp2;
-        SpeechSynthesizer TTS = new SpeechSynthesizer();
+        private readonly Cereal _sp2;
+        private readonly SpeechSynthesizer _tts = new SpeechSynthesizer();
 
-        Random rnd = new Random();
-        GameMode SelectedMode = GameMode.Alphabet;
+        private readonly Random _rnd = new Random();
+        private GameMode _selectedMode = GameMode.Alphabet;
 
-        List<Letter> Letters = new List<Letter>();
-        Letter[] TempArray = new Letter[30];
-        Letter ExpectedLetter;
-        List<Letter> PendingLetters = new List<Letter>();
+        private readonly List<Letter> _letters = new List<Letter>();
+        private readonly Letter[] _tempArray = new Letter[30];
+        private Letter _expectedLetter;
+        private readonly List<Letter> _pendingLetters = new List<Letter>();
 
-        bool GameStarted = false;
-        string UserName;
+        private bool _gameStarted;
+        private string _userName;
 
         // Sonidos
 
-        SoundPlayer ErrorSound = new SoundPlayer(Properties.Resources.Error);
-        SoundPlayer FoundSound = new SoundPlayer(Properties.Resources.Dada_1);
-        SoundPlayer WinSound = new SoundPlayer(Properties.Resources.Clap);
-        SoundPlayer ClickSound = new SoundPlayer(Properties.Resources.Enter___Back);
-        SoundPlayer EnterSound = new SoundPlayer(Properties.Resources.Popup___Run_Title);
-        SoundPlayer HomeSound = new SoundPlayer(Properties.Resources.Home);
-        SoundPlayer NewsSound = new SoundPlayer(Properties.Resources.News);
-        SoundPlayer BingSound = new SoundPlayer(Properties.Resources.Bing);
-        SoundPlayer BorderSound = new SoundPlayer(Properties.Resources.Border);
-        SoundPlayer DadaSound = new SoundPlayer(Properties.Resources.Dada_2);
+        private readonly SoundPlayer _errorSound = new SoundPlayer(Resources.Error);
+        private readonly SoundPlayer _foundSound = new SoundPlayer(Resources.Dada_1);
+        private readonly SoundPlayer _winSound = new SoundPlayer(Resources.Clap);
+        private readonly SoundPlayer _clickSound = new SoundPlayer(Resources.Enter___Back);
+        private readonly SoundPlayer _enterSound = new SoundPlayer(Resources.Popup___Run_Title);
+        private readonly SoundPlayer _homeSound = new SoundPlayer(Resources.Home);
+        private readonly SoundPlayer _newsSound = new SoundPlayer(Resources.News);
+        private readonly SoundPlayer _bingSound = new SoundPlayer(Resources.Bing);
+        private readonly SoundPlayer _borderSound = new SoundPlayer(Resources.Border);
 
         // Iconos
 
-        Image tilePlay = new Bitmap(Properties.Resources.icons8_circled_play_32__1_);
-        Image tileStop = new Bitmap(Properties.Resources.icons8_stop_circled_32__1_);
+        private readonly Image _tilePlay = new Bitmap(Resources.icons8_circled_play_32__1_);
+        private readonly Image _tileStop = new Bitmap(Resources.icons8_stop_circled_32__1_);
 
         enum GameMode
         {
@@ -72,68 +72,68 @@ namespace DDUP_Proyecto
         public Braille(Cereal sp2, MetroThemeStyle theme)
         {
             InitializeComponent();
-            this.StyleManager = metroStyleManager1;
-            this.metroStyleManager1.Theme = theme;
+            StyleManager = metroStyleManager1;
+            metroStyleManager1.Theme = theme;
 
             if (metroStyleManager1.Theme == MetroThemeStyle.Dark)
             {
-                braille1.Image = new Bitmap(Properties.Resources.icons8_círculo_80_I);
-                braille2.Image = new Bitmap(Properties.Resources.icons8_círculo_80_I);
-                braille3.Image = new Bitmap(Properties.Resources.icons8_círculo_80_I);
-                braille4.Image = new Bitmap(Properties.Resources.icons8_círculo_80_I);
-                braille5.Image = new Bitmap(Properties.Resources.icons8_círculo_80_I);
-                braille6.Image = new Bitmap(Properties.Resources.icons8_círculo_80_I);
+                braille1.Image = new Bitmap(Resources.icons8_círculo_80_I);
+                braille2.Image = new Bitmap(Resources.icons8_círculo_80_I);
+                braille3.Image = new Bitmap(Resources.icons8_círculo_80_I);
+                braille4.Image = new Bitmap(Resources.icons8_círculo_80_I);
+                braille5.Image = new Bitmap(Resources.icons8_círculo_80_I);
+                braille6.Image = new Bitmap(Resources.icons8_círculo_80_I);
             }
 
-            this.sp2 = sp2;
+            _sp2 = sp2;
             if (sp2 != null)
             {
                 if (sp2.IsOpen())
                     sp2.WriteLine("1");
 
-                this.sp2.LineReceived += new LineReceivedEventHandler(sp2_LineReceived);
+                _sp2.LineReceived += sp2_LineReceived;
             }
 
-            TTS.SetOutputToDefaultAudioDevice();
+            _tts.SetOutputToDefaultAudioDevice();
 
 
 
             // Letras, códigos RFID y combinaciones de los puntos de Braille
-            Letters.Add(new Letter() { LetterName = 'A', LetterPhonetic = "A", LetterId = "70 82 DD 32", BrailleEsp = "1", LetterExample = new string[] { "Árbol", "Ardilla", "Agua" } });
-            Letters.Add(new Letter() { LetterName = 'B', LetterPhonetic = "B", LetterId = "A3 E9 01 40", BrailleEsp = "12", LetterExample = new string[] { "Barco", "Burro", "Brazo" } });
-            Letters.Add(new Letter() { LetterName = 'C', LetterPhonetic = "C", LetterId = "45 5B 4D 2A", BrailleEsp = "14", LetterExample = new string[] { "Casa", "Comida", "Caballo" } });
-            Letters.Add(new Letter() { LetterName = 'D', LetterPhonetic = "Dé", LetterId = "80 8D 3F 32", BrailleEsp = "145", LetterExample = new string[] { "Dedo", "Delfín", "Diente" } });
-            Letters.Add(new Letter() { LetterName = 'E', LetterPhonetic = "E", LetterId = "80 3F 7E 32", BrailleEsp = "15", LetterExample = new string[] { "Estatua", "Elote", "Elefante" } });
-            Letters.Add(new Letter() { LetterName = 'F', LetterPhonetic = "Efe", LetterId = "90 1F 2E 32", BrailleEsp = "124", LetterExample = new string[] { "Foca", "Fresa", "Frijol" } });
-            Letters.Add(new Letter() { LetterName = 'G', LetterPhonetic = "Ge", LetterId = "93 9A D8 40", BrailleEsp = "1245", LetterExample = new string[] { "Guante", "Gato", "Gelatina" } });
-            Letters.Add(new Letter() { LetterName = 'H', LetterPhonetic = "Ache", LetterId = "70 EB 4E 32", BrailleEsp = "125", LetterExample = new string[] { "Huevo", "Helado", "Hongo" } });
-            Letters.Add(new Letter() { LetterName = 'I', LetterPhonetic = "I", LetterId = "90 3B B3 32", BrailleEsp = "24", LetterExample = new string[] { "Iglesia", "Iguana", "Isla" } });
-            Letters.Add(new Letter() { LetterName = 'J', LetterPhonetic = "Jota", LetterId = "90 F9 5D 32", BrailleEsp = "245", LetterExample = new string[] { "Jeringa", "Jamón", "Jardín" } });
-            Letters.Add(new Letter() { LetterName = 'K', LetterPhonetic = "Ca", LetterId = "C7 7F 37 19", BrailleEsp = "13", LetterExample = new string[] { "Kilo", "Koala", "Kiwi" } });
-            Letters.Add(new Letter() { LetterName = 'L', LetterPhonetic = "L", LetterId = "70 86 15 32", BrailleEsp = "123", LetterExample = new string[] { "León", "Lagartija", "Lápiz" } });
-            Letters.Add(new Letter() { LetterName = 'M', LetterPhonetic = "M", LetterId = "F4 5A 3B 2A", BrailleEsp = "134", LetterExample = new string[] { "Mundo", "Mariposa", "Mano" } });
-            Letters.Add(new Letter() { LetterName = 'N', LetterPhonetic = "N", LetterId = "B7 17 C5 3B", BrailleEsp = "1345", LetterExample = new string[] { "Nariz", "Niño", "Nopal" } });
-            Letters.Add(new Letter() { LetterName = 'O', LetterPhonetic = "O", LetterId = "04 6B D6 2B", BrailleEsp = "135", LetterExample = new string[] { "Ojo", "Oso", "Oreja" } });
-            Letters.Add(new Letter() { LetterName = 'P', LetterPhonetic = "Pé", LetterId = "F4 CC 26 2A", BrailleEsp = "1234", LetterExample = new string[] { "Paleta", "Plato", "Pescado" } });
-            Letters.Add(new Letter() { LetterName = 'Q', LetterPhonetic = "Cú", LetterId = "04 56 53 2B", BrailleEsp = "12345", LetterExample = new string[] { "Queso", "Quesadilla", "Química" } });
-            Letters.Add(new Letter() { LetterName = 'R', LetterPhonetic = "Erre", LetterId = "B3 08 1B 40", BrailleEsp = "1235", LetterExample = new string[] { "Ratón", "Rama", "Rueda" } });
-            Letters.Add(new Letter() { LetterName = 'S', LetterPhonetic = "Ese", LetterId = "04 8A 86 2B", BrailleEsp = "234", LetterExample = new string[] { "Sartén", "Serpiente", "Sopa" } });
-            Letters.Add(new Letter() { LetterName = 'T', LetterPhonetic = "Té", LetterId = "04 2B 3E 2B", BrailleEsp = "2345", LetterExample = new string[] { "Taza", "Taco", "Tortuga" } });
-            Letters.Add(new Letter() { LetterName = 'U', LetterPhonetic = "U", LetterId = "90 FB A0 32", BrailleEsp = "136", LetterExample = new string[] { "Uva", "Uña", "Unicornio" } });
-            Letters.Add(new Letter() { LetterName = 'V', LetterPhonetic = "Uvé", LetterId = "04 0E 23 2B", BrailleEsp = "1236", LetterExample = new string[] { "Vaca", "Vuelta", "Vacío" } });
-            Letters.Add(new Letter() { LetterName = 'W', LetterPhonetic = "DobleÚ", LetterId = "35 6E 84 2A", BrailleEsp = "2456", LetterExample = new string[] { "Whiskey", "Wi-Fi", "Waffle" } });
-            Letters.Add(new Letter() { LetterName = 'X', LetterPhonetic = "Equis", LetterId = "04 B6 48 2B", BrailleEsp = "1346", LetterExample = new string[] { "Xilófono" } });
-            Letters.Add(new Letter() { LetterName = 'Y', LetterPhonetic = "I griega", LetterId = "04 A7 77 2B", BrailleEsp = "13456", LetterExample = new string[] { "Yo-yó", "Yegua", "Yogurt" } });
-            Letters.Add(new Letter() { LetterName = 'Z', LetterPhonetic = "Zeta", LetterId = "F4 6F 96 2A", BrailleEsp = "1356", LetterExample = new string[] { "Zanahoria", "Zapato", "Zoológico" } });
-            Letters.Add(new Letter() { LetterName = 'M', LetterPhonetic = "Mario", LetterId = "71 CB 17 EC", BrailleEsp = "123456", LetterExample = new string[] { "Zanahoria", "Zapato", "Zoológico" } });
+            _letters.Add(new Letter { LetterName = 'A', LetterPhonetic = "A", LetterId = "70 82 DD 32", BrailleEsp = "1", LetterExample = new[] { "Árbol", "Ardilla", "Agua" } });
+            _letters.Add(new Letter { LetterName = 'B', LetterPhonetic = "B", LetterId = "A3 E9 01 40", BrailleEsp = "12", LetterExample = new[] { "Barco", "Burro", "Brazo" } });
+            _letters.Add(new Letter { LetterName = 'C', LetterPhonetic = "C", LetterId = "45 5B 4D 2A", BrailleEsp = "14", LetterExample = new[] { "Casa", "Comida", "Caballo" } });
+            _letters.Add(new Letter { LetterName = 'D', LetterPhonetic = "Dé", LetterId = "80 8D 3F 32", BrailleEsp = "145", LetterExample = new[] { "Dedo", "Delfín", "Diente" } });
+            _letters.Add(new Letter { LetterName = 'E', LetterPhonetic = "E", LetterId = "80 3F 7E 32", BrailleEsp = "15", LetterExample = new[] { "Estatua", "Elote", "Elefante" } });
+            _letters.Add(new Letter { LetterName = 'F', LetterPhonetic = "Efe", LetterId = "90 1F 2E 32", BrailleEsp = "124", LetterExample = new[] { "Foca", "Fresa", "Frijol" } });
+            _letters.Add(new Letter { LetterName = 'G', LetterPhonetic = "Ge", LetterId = "93 9A D8 40", BrailleEsp = "1245", LetterExample = new[] { "Guante", "Gato", "Gelatina" } });
+            _letters.Add(new Letter { LetterName = 'H', LetterPhonetic = "Ache", LetterId = "70 EB 4E 32", BrailleEsp = "125", LetterExample = new[] { "Huevo", "Helado", "Hongo" } });
+            _letters.Add(new Letter { LetterName = 'I', LetterPhonetic = "I", LetterId = "90 3B B3 32", BrailleEsp = "24", LetterExample = new[] { "Iglesia", "Iguana", "Isla" } });
+            _letters.Add(new Letter { LetterName = 'J', LetterPhonetic = "Jota", LetterId = "90 F9 5D 32", BrailleEsp = "245", LetterExample = new[] { "Jeringa", "Jamón", "Jardín" } });
+            _letters.Add(new Letter { LetterName = 'K', LetterPhonetic = "Ca", LetterId = "C7 7F 37 19", BrailleEsp = "13", LetterExample = new[] { "Kilo", "Koala", "Kiwi" } });
+            _letters.Add(new Letter { LetterName = 'L', LetterPhonetic = "L", LetterId = "70 86 15 32", BrailleEsp = "123", LetterExample = new[] { "León", "Lagartija", "Lápiz" } });
+            _letters.Add(new Letter { LetterName = 'M', LetterPhonetic = "M", LetterId = "F4 5A 3B 2A", BrailleEsp = "134", LetterExample = new[] { "Mundo", "Mariposa", "Mano" } });
+            _letters.Add(new Letter { LetterName = 'N', LetterPhonetic = "N", LetterId = "B7 17 C5 3B", BrailleEsp = "1345", LetterExample = new[] { "Nariz", "Niño", "Nopal" } });
+            _letters.Add(new Letter { LetterName = 'O', LetterPhonetic = "O", LetterId = "04 6B D6 2B", BrailleEsp = "135", LetterExample = new[] { "Ojo", "Oso", "Oreja" } });
+            _letters.Add(new Letter { LetterName = 'P', LetterPhonetic = "Pé", LetterId = "F4 CC 26 2A", BrailleEsp = "1234", LetterExample = new[] { "Paleta", "Plato", "Pescado" } });
+            _letters.Add(new Letter { LetterName = 'Q', LetterPhonetic = "Cú", LetterId = "04 56 53 2B", BrailleEsp = "12345", LetterExample = new[] { "Queso", "Quesadilla", "Química" } });
+            _letters.Add(new Letter { LetterName = 'R', LetterPhonetic = "Erre", LetterId = "B3 08 1B 40", BrailleEsp = "1235", LetterExample = new[] { "Ratón", "Rama", "Rueda" } });
+            _letters.Add(new Letter { LetterName = 'S', LetterPhonetic = "Ese", LetterId = "04 8A 86 2B", BrailleEsp = "234", LetterExample = new[] { "Sartén", "Serpiente", "Sopa" } });
+            _letters.Add(new Letter { LetterName = 'T', LetterPhonetic = "Té", LetterId = "04 2B 3E 2B", BrailleEsp = "2345", LetterExample = new[] { "Taza", "Taco", "Tortuga" } });
+            _letters.Add(new Letter { LetterName = 'U', LetterPhonetic = "U", LetterId = "90 FB A0 32", BrailleEsp = "136", LetterExample = new[] { "Uva", "Uña", "Unicornio" } });
+            _letters.Add(new Letter { LetterName = 'V', LetterPhonetic = "Uvé", LetterId = "04 0E 23 2B", BrailleEsp = "1236", LetterExample = new[] { "Vaca", "Vuelta", "Vacío" } });
+            _letters.Add(new Letter { LetterName = 'W', LetterPhonetic = "DobleÚ", LetterId = "35 6E 84 2A", BrailleEsp = "2456", LetterExample = new[] { "Whiskey", "Wi-Fi", "Waffle" } });
+            _letters.Add(new Letter { LetterName = 'X', LetterPhonetic = "Equis", LetterId = "04 B6 48 2B", BrailleEsp = "1346", LetterExample = new[] { "Xilófono" } });
+            _letters.Add(new Letter { LetterName = 'Y', LetterPhonetic = "I griega", LetterId = "04 A7 77 2B", BrailleEsp = "13456", LetterExample = new[] { "Yo-yó", "Yegua", "Yogurt" } });
+            _letters.Add(new Letter { LetterName = 'Z', LetterPhonetic = "Zeta", LetterId = "F4 6F 96 2A", BrailleEsp = "1356", LetterExample = new[] { "Zanahoria", "Zapato", "Zoológico" } });
+            _letters.Add(new Letter { LetterName = 'M', LetterPhonetic = "Mario", LetterId = "71 CB 17 EC", BrailleEsp = "123456", LetterExample = new[] { "Zanahoria", "Zapato", "Zoológico" } });
 
 
-            Letters.CopyTo(TempArray);
+            _letters.CopyTo(_tempArray);
 
             ComboBoxRangeA.Items.Clear();
             ComboBoxRangeB.Items.Clear();
 
-            for (char letter = 'A'; letter <= 'Z'; letter++)
+            for (var letter = 'A'; letter <= 'Z'; letter++)
             {
                 Console.WriteLine(letter);
                 ComboBoxRangeA.Items.Add(letter);
@@ -156,17 +156,17 @@ namespace DDUP_Proyecto
         /// <param name="requested">La letra que se le pidió al usuario que ingresara.</param>
         private void ErrorDialog(Letter actualLetter, Letter requested)
         {
-            int dialog = rnd.Next(0, 4);
+            var dialog = _rnd.Next(0, 4);
             switch (dialog)
             {
                 case 0:
                     Speak("Coloca la letra " + requested.LetterPhonetic);
                     break;
                 case 1:
-                    Speak(UserName + ", busca la letra " + requested.LetterPhonetic + ". ");
+                    Speak(_userName + ", busca la letra " + requested.LetterPhonetic + ". ");
                     break;
                 case 2:
-                    Speak(UserName + ", esa no es la letra " + requested.LetterPhonetic + ". ");
+                    Speak(_userName + ", esa no es la letra " + requested.LetterPhonetic + ". ");
                     break;
                 case 3:
                     Speak("Esa es la letra " + actualLetter.LetterPhonetic + ", necesitamos la letra " + requested.LetterPhonetic);
@@ -180,8 +180,8 @@ namespace DDUP_Proyecto
         /// <param name="letter">La letra que el usuario ingresó en el tablero.</param>
         private void FoundDialog(Letter letter)
         {
-            int dialog = rnd.Next(0, 3);
-            string dialogString = "";
+            var dialog = _rnd.Next(0, 3);
+            var dialogString = "";
             switch (dialog)
             {
                 case 0:
@@ -195,7 +195,7 @@ namespace DDUP_Proyecto
                     break;
             }
             if (CheckBoxExample.Checked)
-                dialogString += " de " + letter.GiveExample(rnd);
+                dialogString += " de " + letter.GiveExample(_rnd);
 
             Speak(dialogString);
         }
@@ -206,21 +206,21 @@ namespace DDUP_Proyecto
         /// <param name="letter">La letra que el usuario ingresó en el tablero.</param>
         private void CorrectDialog(Letter letter)
         {
-            FoundSound.Play();
-            int dialog = rnd.Next(0, 4);
+            _foundSound.Play();
+            var dialog = _rnd.Next(0, 4);
             switch (dialog)
             {
                 case 0:
-                    TTS.Speak("Correcto, " + UserName + ", esa es la letra " + letter.LetterPhonetic);
+                    _tts.Speak("Correcto, " + _userName + ", esa es la letra " + letter.LetterPhonetic);
                     break;
                 case 1:
-                    TTS.Speak("Muy bien, " + UserName + ", esa es la letra " + letter.LetterPhonetic);
+                    _tts.Speak("Muy bien, " + _userName + ", esa es la letra " + letter.LetterPhonetic);
                     break;
                 case 2:
-                    TTS.Speak("Bien hecho, " + UserName + ", encontraste la letra " + letter.LetterPhonetic);
+                    _tts.Speak("Bien hecho, " + _userName + ", encontraste la letra " + letter.LetterPhonetic);
                     break;
                 case 3:
-                    TTS.Speak("Perfecto, encontraste la letra " + letter.LetterPhonetic);
+                    _tts.Speak("Perfecto, encontraste la letra " + letter.LetterPhonetic);
                     break;
             }
         }
@@ -229,23 +229,23 @@ namespace DDUP_Proyecto
         /// El método EndGame termina el juego en curso determinando una razón del termino del juego ya sea por el tutor o porque se acabaron las letras en el minijuego.
         /// </summary>
         /// <param name="razon">Razón por la cual se terminó el juego.</param>
-        void EndGame(int razon)
+        private void EndGame(int razon)
         {
             switch (razon)
             {
                 case 0:
-                    TTS.Speak("Terminando juego");
+                    _tts.Speak("Terminando juego");
                     break;
 
                 case 1:
-                    WinSound.Play();
-                    TTS.Speak("Felicidades " + UserName + ". Colocaste todas las letras de la " + ComboBoxRangeA.SelectedItem + ", a la " + ComboBoxRangeB.SelectedItem + ", Juego completado.");
+                    _winSound.Play();
+                    _tts.Speak("Felicidades " + _userName + ". Colocaste todas las letras de la " + ComboBoxRangeA.SelectedItem + ", a la " + ComboBoxRangeB.SelectedItem + ", Juego completado.");
                     ChangeGameState();
                     break;
 
                 case 2:
-                    WinSound.Play();
-                    TTS.Speak("Felicidades " + UserName + ". Colocaste todas las vocales, juego completado.");
+                    _winSound.Play();
+                    _tts.Speak("Felicidades " + _userName + ". Colocaste todas las vocales, juego completado.");
                     ChangeGameState();
                     break;
             }
@@ -258,9 +258,9 @@ namespace DDUP_Proyecto
         /// <summary>
         /// Método para iniciar el juego con las letras del alfabeto elegidas.
         /// </summary>
-        void StartGameAlphabet()
+        private void StartGameAlphabet()
         {
-            TTS.Speak("Comenzando juego de la " + ComboBoxRangeA.SelectedItem + ", a la " + ComboBoxRangeB.SelectedItem + ". ");
+            _tts.Speak("Comenzando juego de la " + ComboBoxRangeA.SelectedItem + ", a la " + ComboBoxRangeB.SelectedItem + ". ");
             StartMainGame();
             NewLetter();
         }
@@ -268,30 +268,27 @@ namespace DDUP_Proyecto
         /// <summary>
         /// Método para inicializar el juego principal.
         /// </summary>
-        void StartMainGame()
+        private void StartMainGame()
         {
-            PendingLetters.Clear();
+            _pendingLetters.Clear();
 
-            for (int x = ComboBoxRangeA.SelectedIndex; x < ComboBoxRangeB.SelectedIndex + 1; x++)
+            for (var x = ComboBoxRangeA.SelectedIndex; x < ComboBoxRangeB.SelectedIndex + 1; x++)
             {
-                PendingLetters.Add(TempArray[x]);
+                _pendingLetters.Add(_tempArray[x]);
             }
 
             if (RadioButtonVowels.Checked)
             {
-                foreach (Letter c in Letters)
+                foreach (var c in _letters.Where(c => !"AEIOU".Contains(c.LetterName)))
                 {
-                    if (!"AEIOU".Contains(c.LetterName))
-                    {
-                        PendingLetters.Remove(c);
-                    }
+                    _pendingLetters.Remove(c);
                 }
             }
 
             if (RadioButtonAleatorio.Checked)
-                PendingLetters.Shuffle();
+                _pendingLetters.Shuffle();
 
-            foreach (Letter c in PendingLetters)
+            foreach (Letter c in _pendingLetters)
             {
                 Console.WriteLine(c.LetterName);
             }
@@ -300,9 +297,9 @@ namespace DDUP_Proyecto
         /// <summary>
         /// Método para iniciar el juego con las vocales.
         /// </summary>
-        void StartGameVowels()
+        private void StartGameVowels()
         {
-            TTS.Speak("Comenzando juego con las vocales.");
+            _tts.Speak("Comenzando juego con las vocales.");
             StartMainGame();
             NewLetter();
         }
@@ -317,13 +314,13 @@ namespace DDUP_Proyecto
         /// </summary>
         /// <param name="sender">El objeto que envía el dato (puerto serial).</param>
         /// <param name="Args">Los datos recibidos a través del puerto serial.</param>
-        void sp2_LineReceived(object sender, LineReceivedEventArgs Args)
+        private void sp2_LineReceived(object sender, LineReceivedEventArgs Args)
         {
             Console.WriteLine(TAG + Args.LineData);
 
-            if (this.InvokeRequired)
+            if (InvokeRequired)
             {
-                this.Invoke((MethodInvoker)(delegate () { UpdateUI(Args.LineData); }));
+                Invoke((MethodInvoker)(delegate { UpdateUI(Args.LineData); }));
             }
         }
 
@@ -331,55 +328,53 @@ namespace DDUP_Proyecto
         /// El método UpdateUI actualiza la interfaz de acuerdo a los datos recibidos a través del parámetro enviado por el método sp2_LineReceived
         /// </summary>
         /// <param name="data">Los datos recibidos a través del puerto serial.</param>
-        void UpdateUI(string data)
+        private void UpdateUI(string data)
         {
             if (data.Length < 11)
                 return;
 
-            string newData = data.Trim();
+            var newData = data.Trim();
             if (data.Contains(";"))
             {
                 newData = data.Substring(2, data.Length);
             }
 
-            Letter result = Letters.Find(
-            delegate (Letter letra)
-            {
-                return letra.LetterId == newData;
-            }
+            var result = _letters.Find(
+                letra => letra.LetterId == newData
             );
 
             if (result != null)
             {
-                if (GameStarted)
+                if (_gameStarted)
                 {
-                    if (ExpectedLetter == result)
+                    if (_expectedLetter.Equals(result))
                     {
-                        CorrectDialog(ExpectedLetter);
-                        if (SelectedMode == GameMode.Alphabet)
+                        CorrectDialog(_expectedLetter);
+                        switch (_selectedMode)
                         {
-                            if (PendingLetters.Count <= 0)
+                            case GameMode.Alphabet when _pendingLetters.Count <= 0:
                                 EndGame(1);
-                            else
+                                break;
+                            case GameMode.Alphabet:
                                 NewLetter();
-                        }
-                        else if (SelectedMode == GameMode.Vowels)
-                        {
-                            if (PendingLetters.Count <= 0)
+                                break;
+                            case GameMode.Vowels when _pendingLetters.Count <= 0:
                                 EndGame(2);
-                            else
+                                break;
+                            case GameMode.Vowels:
                                 NewLetter();
+                                break;
                         }
                     }
                     else
                     {
-                        ErrorSound.Play();
-                        ErrorDialog(result, ExpectedLetter);
+                        _errorSound.Play();
+                        ErrorDialog(result, _expectedLetter);
                     }
                 }
                 else
                 {
-                    HomeSound.Play();
+                    _homeSound.Play();
                     FoundDialog(result);
                     LabelLetter.Text = "Letra actual: " + result.LetterName;
                     UpdateUI(result);
@@ -387,32 +382,30 @@ namespace DDUP_Proyecto
             }
             else
             {
-                if (!GameStarted)
-                {
-                    ErrorSound.Play();
-                    LabelLetter.Text = "Letra actual:";
-                    braille1.Visible = false;
-                    braille2.Visible = false;
-                    braille3.Visible = false;
-                    braille4.Visible = false;
-                    braille5.Visible = false;
-                    braille6.Visible = false;
-                }
+                if (_gameStarted) return;
+                _errorSound.Play();
+                LabelLetter.Text = "Letra actual:";
+                braille1.Visible = false;
+                braille2.Visible = false;
+                braille3.Visible = false;
+                braille4.Visible = false;
+                braille5.Visible = false;
+                braille6.Visible = false;
             }
         }
 
         /// <summary>
         /// Método para cambiar el modo de juego de alfabeto a vocales o viceversa.
         /// </summary>
-        void ChangeGameState()
+        private void ChangeGameState()
         {
-            GameStarted = !GameStarted;
+            _gameStarted = !_gameStarted;
 
-            if (GameStarted)
+            if (_gameStarted)
             {
-                UserName = TextBoxName.Text;
+                _userName = TextBoxName.Text;
 
-                switch (SelectedMode)
+                switch (_selectedMode)
                 {
                     case GameMode.Alphabet:
                         StartGameAlphabet();
@@ -428,52 +421,52 @@ namespace DDUP_Proyecto
                 EndGame(0);
             }
 
-            TileStartStopGame.TileImage = GameStarted ? tileStop : tilePlay;
-            TileStartStopGame.Text = GameStarted ? "TERMINAR JUEGO" : "COMENZAR JUEGO";
-            TileSkipLetter.Visible = GameStarted;
-            ComboBoxRangeA.Enabled = !GameStarted;
-            ComboBoxRangeB.Enabled = !GameStarted;
-            RadioButtonAlphabet.Enabled = !GameStarted;
-            RadioButtonVowels.Enabled = !GameStarted;
-            RadioButtonAleatorio.Enabled = !GameStarted;
-            RadioButtonOrdenado.Enabled = !GameStarted;
-            TextBoxName.Enabled = !GameStarted;
+            TileStartStopGame.TileImage = _gameStarted ? _tileStop : _tilePlay;
+            TileStartStopGame.Text = _gameStarted ? "TERMINAR JUEGO" : "COMENZAR JUEGO";
+            TileSkipLetter.Visible = _gameStarted;
+            ComboBoxRangeA.Enabled = !_gameStarted;
+            ComboBoxRangeB.Enabled = !_gameStarted;
+            RadioButtonAlphabet.Enabled = !_gameStarted;
+            RadioButtonVowels.Enabled = !_gameStarted;
+            RadioButtonAleatorio.Enabled = !_gameStarted;
+            RadioButtonOrdenado.Enabled = !_gameStarted;
+            TextBoxName.Enabled = !_gameStarted;
         }
 
         /// <summary>
         /// Método para cambiar la letra que se le pide al usuario en un minijuego.
         /// </summary>
-        void NewLetter()
+        private void NewLetter()
         {
-            HomeSound.Play();
-            ExpectedLetter = PendingLetters.First();
-            PendingLetters.RemoveAt(0);
-            NewLetterDialog(ExpectedLetter);
-            UpdateUI(ExpectedLetter);
+            _homeSound.Play();
+            _expectedLetter = _pendingLetters.First();
+            _pendingLetters.RemoveAt(0);
+            NewLetterDialog(_expectedLetter);
+            UpdateUI(_expectedLetter);
         }
 
         /// <summary>
         /// Método para hacerle saber al usuario que se le está pidiendo una nueva letra durante el minijuego.
         /// </summary>
-        /// <param name="ExpectedLetter">Siguiente letra que se le pedirá al usuario.</param>
-        private void NewLetterDialog(Letter ExpectedLetter)
+        /// <param name="expectedLetter">Siguiente letra que se le pedirá al usuario.</param>
+        private void NewLetterDialog(Letter expectedLetter)
         {
-            int dialog = rnd.Next(0, 3);
-            string dialogString = "";
+            var dialog = _rnd.Next(0, 3);
+            var dialogString = "";
             switch (dialog)
             {
                 case 0:
-                    dialogString = ("Coloca la letra: " + ExpectedLetter.LetterPhonetic);
+                    dialogString = ("Coloca la letra: " + expectedLetter.LetterPhonetic);
                     break;
                 case 1:
-                    dialogString = (UserName + ", busca la letra: " + ExpectedLetter.LetterPhonetic + ".");
+                    dialogString = (_userName + ", busca la letra: " + expectedLetter.LetterPhonetic + ".");
                     break;
                 case 2:
-                    dialogString = ("Necesitamos la letra: " + ExpectedLetter.LetterPhonetic);
+                    dialogString = ("Necesitamos la letra: " + expectedLetter.LetterPhonetic);
                     break;
             }
             if (CheckBoxExample.Checked)
-                dialogString += " de " + ExpectedLetter.GiveExample(rnd);
+                dialogString += " de " + expectedLetter.GiveExample(_rnd);
             Speak(dialogString);
         }
 
@@ -481,7 +474,7 @@ namespace DDUP_Proyecto
         /// Método para actualizar el texto y los puntos de Braille en la interfaz de usuario.
         /// </summary>
         /// <param name="letter">Letra que se le pide al usuario en el modo juego o que el usuario coloca en el modo práctica.</param>
-        void UpdateUI(Letter letter)
+        private void UpdateUI(Letter letter)
         {
             LabelLetter.Text = "Letra actual: " + letter.LetterName;
             braille1.Visible = letter.BrailleEsp.Contains("1");
@@ -496,12 +489,12 @@ namespace DDUP_Proyecto
         /// Método para utilizar la función de texto a voz y que el usuario invidente escuche las instrucciones o avisos del programa.
         /// </summary>
         /// <param name="text">Texto con el diálogo que se escuchará a través de los altavoces o audífonos.</param>
-        void Speak(string text)
+        private void Speak(string text)
         {
-            if (TTS.State == SynthesizerState.Speaking)
-                TTS.SpeakAsyncCancelAll();
+            if (_tts.State == SynthesizerState.Speaking)
+                _tts.SpeakAsyncCancelAll();
 
-            TTS.SpeakAsync(text);
+            _tts.SpeakAsync(text);
         }
 
         /// <summary>
@@ -511,7 +504,7 @@ namespace DDUP_Proyecto
         {
             if (RadioButtonAlphabet.Checked)
             {
-                SelectedMode = GameMode.Alphabet;
+                _selectedMode = GameMode.Alphabet;
                 metroLabel1.Text = "Desde: ";
                 metroLabel2.Visible = true;
                 ComboBoxRangeA.Visible = true;
@@ -519,7 +512,7 @@ namespace DDUP_Proyecto
             }
             else if (RadioButtonVowels.Checked)
             {
-                SelectedMode = GameMode.Vowels;
+                _selectedMode = GameMode.Vowels;
                 metroLabel1.Text = "AEIOU";
                 metroLabel2.Visible = false;
                 ComboBoxRangeA.Visible = false;
@@ -538,19 +531,17 @@ namespace DDUP_Proyecto
         {
             if (ComboBoxRangeA.SelectedIndex > ComboBoxRangeB.SelectedIndex)
             {
-                ComboBoxRangeB.SelectedIndex = ComboBoxRangeA.SelectedIndex < Letters.Count - 1 ? ComboBoxRangeA.SelectedIndex + 1 : ComboBoxRangeA.SelectedIndex;
+                ComboBoxRangeB.SelectedIndex = ComboBoxRangeA.SelectedIndex < _letters.Count - 1 ? ComboBoxRangeA.SelectedIndex + 1 : ComboBoxRangeA.SelectedIndex;
             }
 
-            if (ComboBoxRangeA.SelectedIndex == ComboBoxRangeB.SelectedIndex)
+            if (ComboBoxRangeA.SelectedIndex != ComboBoxRangeB.SelectedIndex) return;
+            if (ComboBoxRangeB.SelectedIndex < _letters.Count - 1)
             {
-                if (ComboBoxRangeB.SelectedIndex < Letters.Count - 1)
-                {
-                    ComboBoxRangeB.SelectedIndex = ComboBoxRangeB.SelectedIndex + 1;
-                }
-                else
-                {
-                    ComboBoxRangeA.SelectedIndex--;
-                }
+                ComboBoxRangeB.SelectedIndex += 1;
+            }
+            else
+            {
+                ComboBoxRangeA.SelectedIndex--;
             }
         }
 
@@ -564,16 +555,14 @@ namespace DDUP_Proyecto
                 ComboBoxRangeA.SelectedIndex = ComboBoxRangeB.SelectedIndex > 0 ? ComboBoxRangeB.SelectedIndex - 1 : ComboBoxRangeB.SelectedIndex;
             }
 
-            if (ComboBoxRangeB.SelectedIndex == ComboBoxRangeA.SelectedIndex)
+            if (ComboBoxRangeB.SelectedIndex != ComboBoxRangeA.SelectedIndex) return;
+            if (ComboBoxRangeA.SelectedIndex > 0)
             {
-                if (ComboBoxRangeA.SelectedIndex > 0)
-                {
-                    ComboBoxRangeA.SelectedIndex = ComboBoxRangeA.SelectedIndex - 1;
-                }
-                else
-                {
-                    ComboBoxRangeB.SelectedIndex++;
-                }
+                ComboBoxRangeA.SelectedIndex -= 1;
+            }
+            else
+            {
+                ComboBoxRangeB.SelectedIndex++;
             }
         }
 
@@ -584,7 +573,7 @@ namespace DDUP_Proyecto
         {
             if (TextBoxName.Text.Trim().Length >= 3)
             {
-                EnterSound.Play();
+                _enterSound.Play();
                 ChangeGameState();
             }
             else
@@ -602,39 +591,37 @@ namespace DDUP_Proyecto
 
         private void Braille_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (sp2 != null)
-            {
-                if (sp2.IsOpen())
-                    sp2.WriteLine("0");
-            }
+            if (_sp2 == null) return;
+            if (_sp2.IsOpen())
+                _sp2.WriteLine("0");
         }
 
         private void CheckBoxExample_CheckedChanged(object sender, EventArgs e)
         {
             if (CheckBoxExample.Checked)
             {
-                BingSound.Play();
+                _bingSound.Play();
             }
             else
             {
-                BorderSound.Play();
+                _borderSound.Play();
             }
         }
 
         private void PlayClickSound(object sender, EventArgs e)
         {
-            ClickSound.Play();
+            _clickSound.Play();
         }
 
         private void PlayClickSound(object sender, MouseEventArgs e)
         {
-            ClickSound.Play();
+            _clickSound.Play();
         }
 
         private void TileSkipLetter_Click(object sender, EventArgs e)
         {
-            NewsSound.Play();
-            if (PendingLetters.Count <= 0)
+            _newsSound.Play();
+            if (_pendingLetters.Count <= 0)
                 EndGame(0);
             else
                 NewLetter();
@@ -647,7 +634,7 @@ namespace DDUP_Proyecto
     ///  Esta clase se utiliza para guardar la información de los identificadores de las tarjetas RFID, 
     ///  cómo se pronuncian las letras de manera correcta, cuáles son los puntos de Braille que utiliza, etc.
     /// </summary>
-    class Letter : IEquatable<Letter>
+    internal class Letter : IEquatable<Letter>
     {
         public char LetterName { get; set; }
         public string LetterId { get; set; }
@@ -661,10 +648,8 @@ namespace DDUP_Proyecto
         }
         public override bool Equals(object obj)
         {
-            if (obj == null) return false;
-            Letter objAsPart = obj as Letter;
-            if (objAsPart == null) return false;
-            else return Equals(objAsPart);
+            var objAsPart = obj as Letter;
+            return objAsPart != null && Equals(objAsPart);
         }
         public override int GetHashCode()
         {
@@ -677,8 +662,7 @@ namespace DDUP_Proyecto
         /// <returns>Verdadero si es la misma letra, Falso si es null o una letra distinta.</returns>
         public bool Equals(Letter other)
         {
-            if (other == null) return false;
-            return (this.LetterId.Equals(other.LetterId));
+            return LetterId != null && other != null && LetterId.Equals(other.LetterId);
         }
         /// <summary>
         /// Método para dar un ejemplo de una palabra que comience con la letra creada.

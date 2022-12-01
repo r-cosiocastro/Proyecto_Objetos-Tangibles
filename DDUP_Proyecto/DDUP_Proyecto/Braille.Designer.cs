@@ -16,18 +16,18 @@
             if (disposing && (components != null))
             {
                 components.Dispose();
-                ErrorSound.Dispose();
-                FoundSound.Dispose();
-                BingSound.Dispose();
-                BorderSound.Dispose();
-                ClickSound.Dispose();
-                EnterSound.Dispose();
-                HomeSound.Dispose();
-                NewsSound.Dispose();
-                WinSound.Dispose();
-                tilePlay.Dispose();
-                tileStop.Dispose();
-                TTS.Dispose();
+                _errorSound.Dispose();
+                _foundSound.Dispose();
+                _bingSound.Dispose();
+                _borderSound.Dispose();
+                _clickSound.Dispose();
+                _enterSound.Dispose();
+                _homeSound.Dispose();
+                _newsSound.Dispose();
+                _winSound.Dispose();
+                _tilePlay.Dispose();
+                _tileStop.Dispose();
+                _tts.Dispose();
             }
             base.Dispose(disposing);
         }

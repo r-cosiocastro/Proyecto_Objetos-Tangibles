@@ -13,7 +13,7 @@ namespace DDUP_Proyecto
 {
     public partial class Biblioteca2 : MetroForm
     {
-        Cereal sp2;
+        PuertoSerial sp2;
         SpeechSynthesizer tts = new SpeechSynthesizer();
         SoundPlayer errorSound;
         SoundPlayer foundSound;
@@ -113,7 +113,7 @@ namespace DDUP_Proyecto
         }
 
 
-        public Biblioteca2(Cereal sp2, MetroThemeStyle theme)
+        public Biblioteca2(PuertoSerial sp2, MetroThemeStyle theme)
         {
             this.sp2 = sp2;
             InitializeComponent();

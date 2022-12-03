@@ -144,7 +144,7 @@
     <Compile Include="Braille.Designer.cs">
       <DependentUpon>Braille.cs</DependentUpon>
     </Compile>
-    <Compile Include="Cereal.cs" />
+    <Compile Include="PuertoSerial.cs" />
     <Compile Include="Conexion.cs">
       <SubType>Form</SubType>
     </Compile>

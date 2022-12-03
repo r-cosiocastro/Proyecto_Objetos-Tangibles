@@ -13,7 +13,7 @@ namespace DDUP_Proyecto
     public partial class Colores : MetroForm
     {
         private readonly string TAG = "Braille.cs: ";
-        Cereal sp2;
+        PuertoSerial sp2;
         SpeechSynthesizer TTS = new SpeechSynthesizer();
 
         SoundPlayer ErrorSound = new SoundPlayer(Properties.Resources.Error);
@@ -193,7 +193,7 @@ namespace DDUP_Proyecto
             InitializeComponent();
         }
 
-        public Colores(Cereal sp2, MetroThemeStyle theme)
+        public Colores(PuertoSerial sp2, MetroThemeStyle theme)
         {
             InitializeComponent();
             CheckBoxExample.ResetText();

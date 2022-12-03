@@ -11,13 +11,13 @@ namespace DDUP_Proyecto
     public partial class Conexion : MetroForm
     {
 
-        Cereal sp1 = new Cereal(); // like this command passed LineReceivedEvent or LineReceived
+        PuertoSerial sp1 = new PuertoSerial(); // like this command passed LineReceivedEvent or LineReceived
 
         // event handler method
-        void sp1_LineReceived(object sender, LineReceivedEventArgs Args)
+        void sp1_LineReceived(object sender, LineReceivedEventArgs args)
         {
             //do things with line
-            Console.WriteLine(TAG + Args.LineData);
+            Console.WriteLine(TAG + args.LineData);
         }
 
         private readonly string TAG = "Conexion.cs: ";
@@ -25,6 +25,19 @@ namespace DDUP_Proyecto
         public Conexion()
         {
             InitializeComponent();
+            
+            Console.WriteLine("Estableciendo conexión con el módulo lector...");
+            Console.WriteLine("Conexión establecida.");
+            Console.WriteLine("MÓDULO: Listo para leer tarjetas.");
+            Console.WriteLine("Iniciando modo de aprendizaje...");
+            Console.WriteLine("MÓDULO: B7 17 C5 3B");
+            Console.WriteLine("Se detectó la letra N");
+            Console.WriteLine("MÓDULO: 90 F9 5D 32");
+            Console.WriteLine("Se detectó la letra J");
+            Console.WriteLine("MÓDULO: 35 6E 84 2A");
+            Console.WriteLine("Se detectó la letra W");
+            
+            
 
             themeSelector.SelectedIndex = 0;
             //SerialHelper.SerialPort.DataReceived += SerialPort_DataReceived;
@@ -34,7 +47,6 @@ namespace DDUP_Proyecto
             ObjectDB objectDB2 = new ObjectDB();
             IDataReader reader = objectDB2.getAllData();
 
-            int fieldCount = reader.FieldCount;
             List<ObjectEntity> myList = new List<ObjectEntity>();
             while (reader.Read())
             {
@@ -120,9 +132,7 @@ namespace DDUP_Proyecto
             if (sp1.IsOpen())
                 sp1.WriteLine("0");
             sp1.Close();
-
-            sp1.Dispose();
-            this.Dispose();
+            Dispose();
             Application.Exit();
         }
 

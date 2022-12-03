@@ -8,7 +8,7 @@ namespace DDUP_Proyecto
 {
     public partial class RegistroTarjetas : MetroForm
     {
-        Cereal sp2;
+        PuertoSerial sp2;
         bool CellValueChanged = false;
         // event handler method
         void sp2_LineReceived(object sender, LineReceivedEventArgs Args)
@@ -22,7 +22,7 @@ namespace DDUP_Proyecto
         }
 
         private readonly string TAG = "RegistroTarjetas.cs: ";
-        public RegistroTarjetas(Cereal sp2, MetroThemeStyle theme)
+        public RegistroTarjetas(PuertoSerial sp2, MetroThemeStyle theme)
         {
             this.sp2 = sp2;
             InitializeComponent();

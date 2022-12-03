@@ -16,22 +16,22 @@ namespace DDUP_Proyecto
     /// </summary>
     public partial class Braille : MetroForm
     {
-        private readonly string TAG = "Braille.cs: ";
+        private const string TAG = "Braille.cs: ";
 
         #region Inicialización y constructores
 
         // Inicializar variables
 
-        private readonly Cereal _sp2;
+        private readonly PuertoSerial _sp2;
         private readonly SpeechSynthesizer _tts = new SpeechSynthesizer();
 
         private readonly Random _rnd = new Random();
         private GameMode _selectedMode = GameMode.Alphabet;
 
-        private readonly List<Letter> _letters = new List<Letter>();
-        private readonly Letter[] _tempArray = new Letter[30];
-        private Letter _expectedLetter;
-        private readonly List<Letter> _pendingLetters = new List<Letter>();
+        private readonly List<Letra> _letras = new List<Letra>();
+        private readonly Letra[] _tempArray = new Letra[30];
+        private Letra _expectedLetra;
+        private readonly List<Letra> _pendingLetters = new List<Letra>();
 
         private bool _gameStarted;
         private string _userName;
@@ -69,7 +69,7 @@ namespace DDUP_Proyecto
         /// </summary>
         /// <param name="sp2">Objeto para continuar la comunicación Serial con el tablero establecida en la ventana principal.</param>
         /// <param name="theme">Tema elegido por el usuario en la ventana principal.</param>
-        public Braille(Cereal sp2, MetroThemeStyle theme)
+        public Braille(PuertoSerial sp2, MetroThemeStyle theme)
         {
             InitializeComponent();
             StyleManager = metroStyleManager1;
@@ -99,36 +99,36 @@ namespace DDUP_Proyecto
 
 
             // Letras, códigos RFID y combinaciones de los puntos de Braille
-            _letters.Add(new Letter { LetterName = 'A', LetterPhonetic = "A", LetterId = "70 82 DD 32", BrailleEsp = "1", LetterExample = new[] { "Árbol", "Ardilla", "Agua" } });
-            _letters.Add(new Letter { LetterName = 'B', LetterPhonetic = "B", LetterId = "A3 E9 01 40", BrailleEsp = "12", LetterExample = new[] { "Barco", "Burro", "Brazo" } });
-            _letters.Add(new Letter { LetterName = 'C', LetterPhonetic = "C", LetterId = "45 5B 4D 2A", BrailleEsp = "14", LetterExample = new[] { "Casa", "Comida", "Caballo" } });
-            _letters.Add(new Letter { LetterName = 'D', LetterPhonetic = "Dé", LetterId = "80 8D 3F 32", BrailleEsp = "145", LetterExample = new[] { "Dedo", "Delfín", "Diente" } });
-            _letters.Add(new Letter { LetterName = 'E', LetterPhonetic = "E", LetterId = "80 3F 7E 32", BrailleEsp = "15", LetterExample = new[] { "Estatua", "Elote", "Elefante" } });
-            _letters.Add(new Letter { LetterName = 'F', LetterPhonetic = "Efe", LetterId = "90 1F 2E 32", BrailleEsp = "124", LetterExample = new[] { "Foca", "Fresa", "Frijol" } });
-            _letters.Add(new Letter { LetterName = 'G', LetterPhonetic = "Ge", LetterId = "93 9A D8 40", BrailleEsp = "1245", LetterExample = new[] { "Guante", "Gato", "Gelatina" } });
-            _letters.Add(new Letter { LetterName = 'H', LetterPhonetic = "Ache", LetterId = "70 EB 4E 32", BrailleEsp = "125", LetterExample = new[] { "Huevo", "Helado", "Hongo" } });
-            _letters.Add(new Letter { LetterName = 'I', LetterPhonetic = "I", LetterId = "90 3B B3 32", BrailleEsp = "24", LetterExample = new[] { "Iglesia", "Iguana", "Isla" } });
-            _letters.Add(new Letter { LetterName = 'J', LetterPhonetic = "Jota", LetterId = "90 F9 5D 32", BrailleEsp = "245", LetterExample = new[] { "Jeringa", "Jamón", "Jardín" } });
-            _letters.Add(new Letter { LetterName = 'K', LetterPhonetic = "Ca", LetterId = "C7 7F 37 19", BrailleEsp = "13", LetterExample = new[] { "Kilo", "Koala", "Kiwi" } });
-            _letters.Add(new Letter { LetterName = 'L', LetterPhonetic = "L", LetterId = "70 86 15 32", BrailleEsp = "123", LetterExample = new[] { "León", "Lagartija", "Lápiz" } });
-            _letters.Add(new Letter { LetterName = 'M', LetterPhonetic = "M", LetterId = "F4 5A 3B 2A", BrailleEsp = "134", LetterExample = new[] { "Mundo", "Mariposa", "Mano" } });
-            _letters.Add(new Letter { LetterName = 'N', LetterPhonetic = "N", LetterId = "B7 17 C5 3B", BrailleEsp = "1345", LetterExample = new[] { "Nariz", "Niño", "Nopal" } });
-            _letters.Add(new Letter { LetterName = 'O', LetterPhonetic = "O", LetterId = "04 6B D6 2B", BrailleEsp = "135", LetterExample = new[] { "Ojo", "Oso", "Oreja" } });
-            _letters.Add(new Letter { LetterName = 'P', LetterPhonetic = "Pé", LetterId = "F4 CC 26 2A", BrailleEsp = "1234", LetterExample = new[] { "Paleta", "Plato", "Pescado" } });
-            _letters.Add(new Letter { LetterName = 'Q', LetterPhonetic = "Cú", LetterId = "04 56 53 2B", BrailleEsp = "12345", LetterExample = new[] { "Queso", "Quesadilla", "Química" } });
-            _letters.Add(new Letter { LetterName = 'R', LetterPhonetic = "Erre", LetterId = "B3 08 1B 40", BrailleEsp = "1235", LetterExample = new[] { "Ratón", "Rama", "Rueda" } });
-            _letters.Add(new Letter { LetterName = 'S', LetterPhonetic = "Ese", LetterId = "04 8A 86 2B", BrailleEsp = "234", LetterExample = new[] { "Sartén", "Serpiente", "Sopa" } });
-            _letters.Add(new Letter { LetterName = 'T', LetterPhonetic = "Té", LetterId = "04 2B 3E 2B", BrailleEsp = "2345", LetterExample = new[] { "Taza", "Taco", "Tortuga" } });
-            _letters.Add(new Letter { LetterName = 'U', LetterPhonetic = "U", LetterId = "90 FB A0 32", BrailleEsp = "136", LetterExample = new[] { "Uva", "Uña", "Unicornio" } });
-            _letters.Add(new Letter { LetterName = 'V', LetterPhonetic = "Uvé", LetterId = "04 0E 23 2B", BrailleEsp = "1236", LetterExample = new[] { "Vaca", "Vuelta", "Vacío" } });
-            _letters.Add(new Letter { LetterName = 'W', LetterPhonetic = "DobleÚ", LetterId = "35 6E 84 2A", BrailleEsp = "2456", LetterExample = new[] { "Whiskey", "Wi-Fi", "Waffle" } });
-            _letters.Add(new Letter { LetterName = 'X', LetterPhonetic = "Equis", LetterId = "04 B6 48 2B", BrailleEsp = "1346", LetterExample = new[] { "Xilófono" } });
-            _letters.Add(new Letter { LetterName = 'Y', LetterPhonetic = "I griega", LetterId = "04 A7 77 2B", BrailleEsp = "13456", LetterExample = new[] { "Yo-yó", "Yegua", "Yogurt" } });
-            _letters.Add(new Letter { LetterName = 'Z', LetterPhonetic = "Zeta", LetterId = "F4 6F 96 2A", BrailleEsp = "1356", LetterExample = new[] { "Zanahoria", "Zapato", "Zoológico" } });
-            _letters.Add(new Letter { LetterName = 'M', LetterPhonetic = "Mario", LetterId = "71 CB 17 EC", BrailleEsp = "123456", LetterExample = new[] { "Zanahoria", "Zapato", "Zoológico" } });
+            _letras.Add(new Letra { Nombre = 'A', Fonetica = "A", ID = "70 82 DD 32", PuntosBraille = "1", Ejemplos = new[] { "Árbol", "Ardilla", "Agua" } });
+            _letras.Add(new Letra { Nombre = 'B', Fonetica = "B", ID = "A3 E9 01 40", PuntosBraille = "12", Ejemplos = new[] { "Barco", "Burro", "Brazo" } });
+            _letras.Add(new Letra { Nombre = 'C', Fonetica = "C", ID = "45 5B 4D 2A", PuntosBraille = "14", Ejemplos = new[] { "Casa", "Comida", "Caballo" } });
+            _letras.Add(new Letra { Nombre = 'D', Fonetica = "Dé", ID = "80 8D 3F 32", PuntosBraille = "145", Ejemplos = new[] { "Dedo", "Delfín", "Diente" } });
+            _letras.Add(new Letra { Nombre = 'E', Fonetica = "E", ID = "80 3F 7E 32", PuntosBraille = "15", Ejemplos = new[] { "Estatua", "Elote", "Elefante" } });
+            _letras.Add(new Letra { Nombre = 'F', Fonetica = "Efe", ID = "90 1F 2E 32", PuntosBraille = "124", Ejemplos = new[] { "Foca", "Fresa", "Frijol" } });
+            _letras.Add(new Letra { Nombre = 'G', Fonetica = "Ge", ID = "93 9A D8 40", PuntosBraille = "1245", Ejemplos = new[] { "Guante", "Gato", "Gelatina" } });
+            _letras.Add(new Letra { Nombre = 'H', Fonetica = "Ache", ID = "70 EB 4E 32", PuntosBraille = "125", Ejemplos = new[] { "Huevo", "Helado", "Hongo" } });
+            _letras.Add(new Letra { Nombre = 'I', Fonetica = "I", ID = "90 3B B3 32", PuntosBraille = "24", Ejemplos = new[] { "Iglesia", "Iguana", "Isla" } });
+            _letras.Add(new Letra { Nombre = 'J', Fonetica = "Jota", ID = "90 F9 5D 32", PuntosBraille = "245", Ejemplos = new[] { "Jeringa", "Jamón", "Jardín" } });
+            _letras.Add(new Letra { Nombre = 'K', Fonetica = "Ca", ID = "C7 7F 37 19", PuntosBraille = "13", Ejemplos = new[] { "Kilo", "Koala", "Kiwi" } });
+            _letras.Add(new Letra { Nombre = 'L', Fonetica = "L", ID = "70 86 15 32", PuntosBraille = "123", Ejemplos = new[] { "León", "Lagartija", "Lápiz" } });
+            _letras.Add(new Letra { Nombre = 'M', Fonetica = "M", ID = "F4 5A 3B 2A", PuntosBraille = "134", Ejemplos = new[] { "Mundo", "Mariposa", "Mano" } });
+            _letras.Add(new Letra { Nombre = 'N', Fonetica = "N", ID = "B7 17 C5 3B", PuntosBraille = "1345", Ejemplos = new[] { "Nariz", "Niño", "Nopal" } });
+            _letras.Add(new Letra { Nombre = 'O', Fonetica = "O", ID = "04 6B D6 2B", PuntosBraille = "135", Ejemplos = new[] { "Ojo", "Oso", "Oreja" } });
+            _letras.Add(new Letra { Nombre = 'P', Fonetica = "Pé", ID = "F4 CC 26 2A", PuntosBraille = "1234", Ejemplos = new[] { "Paleta", "Plato", "Pescado" } });
+            _letras.Add(new Letra { Nombre = 'Q', Fonetica = "Cú", ID = "04 56 53 2B", PuntosBraille = "12345", Ejemplos = new[] { "Queso", "Quesadilla", "Química" } });
+            _letras.Add(new Letra { Nombre = 'R', Fonetica = "Erre", ID = "B3 08 1B 40", PuntosBraille = "1235", Ejemplos = new[] { "Ratón", "Rama", "Rueda" } });
+            _letras.Add(new Letra { Nombre = 'S', Fonetica = "Ese", ID = "04 8A 86 2B", PuntosBraille = "234", Ejemplos = new[] { "Sartén", "Serpiente", "Sopa" } });
+            _letras.Add(new Letra { Nombre = 'T', Fonetica = "Té", ID = "04 2B 3E 2B", PuntosBraille = "2345", Ejemplos = new[] { "Taza", "Taco", "Tortuga" } });
+            _letras.Add(new Letra { Nombre = 'U', Fonetica = "U", ID = "90 FB A0 32", PuntosBraille = "136", Ejemplos = new[] { "Uva", "Uña", "Unicornio" } });
+            _letras.Add(new Letra { Nombre = 'V', Fonetica = "Uvé", ID = "04 0E 23 2B", PuntosBraille = "1236", Ejemplos = new[] { "Vaca", "Vuelta", "Vacío" } });
+            _letras.Add(new Letra { Nombre = 'W', Fonetica = "DobleÚ", ID = "35 6E 84 2A", PuntosBraille = "2456", Ejemplos = new[] { "Whiskey", "Wi-Fi", "Waffle" } });
+            _letras.Add(new Letra { Nombre = 'X', Fonetica = "Equis", ID = "04 B6 48 2B", PuntosBraille = "1346", Ejemplos = new[] { "Xilófono" } });
+            _letras.Add(new Letra { Nombre = 'Y', Fonetica = "I griega", ID = "04 A7 77 2B", PuntosBraille = "13456", Ejemplos = new[] { "Yo-yó", "Yegua", "Yogurt" } });
+            _letras.Add(new Letra { Nombre = 'Z', Fonetica = "Zeta", ID = "F4 6F 96 2A", PuntosBraille = "1356", Ejemplos = new[] { "Zanahoria", "Zapato", "Zoológico" } });
+            _letras.Add(new Letra { Nombre = 'M', Fonetica = "Mario", ID = "71 CB 17 EC", PuntosBraille = "123456", Ejemplos = new[] { "Zanahoria", "Zapato", "Zoológico" } });
 
 
-            _letters.CopyTo(_tempArray);
+            _letras.CopyTo(_tempArray);
 
             ComboBoxRangeA.Items.Clear();
             ComboBoxRangeB.Items.Clear();
@@ -152,24 +152,24 @@ namespace DDUP_Proyecto
         /// <summary>
         /// El método ErrorDialog crea un diálogo de error aleatorio para hacerle saber al usuario que se ingresó una letra incorrecta. (Solo en el modo juego).
         /// </summary>
-        /// <param name="actualLetter">La letra que el usuario ingresó en el tablero.</param>
+        /// <param name="actualLetra">La letra que el usuario ingresó en el tablero.</param>
         /// <param name="requested">La letra que se le pidió al usuario que ingresara.</param>
-        private void ErrorDialog(Letter actualLetter, Letter requested)
+        private void ErrorDialog(Letra actualLetra, Letra requested)
         {
             var dialog = _rnd.Next(0, 4);
             switch (dialog)
             {
                 case 0:
-                    Speak("Coloca la letra " + requested.LetterPhonetic);
+                    Speak("Coloca la letra " + requested.Fonetica);
                     break;
                 case 1:
-                    Speak(_userName + ", busca la letra " + requested.LetterPhonetic + ". ");
+                    Speak(_userName + ", busca la letra " + requested.Fonetica + ". ");
                     break;
                 case 2:
-                    Speak(_userName + ", esa no es la letra " + requested.LetterPhonetic + ". ");
+                    Speak(_userName + ", esa no es la letra " + requested.Fonetica + ". ");
                     break;
                 case 3:
-                    Speak("Esa es la letra " + actualLetter.LetterPhonetic + ", necesitamos la letra " + requested.LetterPhonetic);
+                    Speak("Esa es la letra " + actualLetra.Fonetica + ", necesitamos la letra " + requested.Fonetica);
                     break;
             }
         }
@@ -177,25 +177,25 @@ namespace DDUP_Proyecto
         /// <summary>
         /// El método FoundDialog crea un diálogo aleatorio para decirle al usuario qué letra es la que colocó en el tablero.
         /// </summary>
-        /// <param name="letter">La letra que el usuario ingresó en el tablero.</param>
-        private void FoundDialog(Letter letter)
+        /// <param name="letra">La letra que el usuario ingresó en el tablero.</param>
+        private void FoundDialog(Letra letra)
         {
             var dialog = _rnd.Next(0, 3);
             var dialogString = "";
             switch (dialog)
             {
                 case 0:
-                    dialogString = "Esa es la letra " + letter.LetterPhonetic;
+                    dialogString = "Esa es la letra " + letra.Fonetica;
                     break;
                 case 1:
-                    dialogString = "Colocaste la letra " + letter.LetterPhonetic;
+                    dialogString = "Colocaste la letra " + letra.Fonetica;
                     break;
                 case 2:
-                    dialogString = "Detecto la letra " + letter.LetterPhonetic;
+                    dialogString = "Detecto la letra " + letra.Fonetica;
                     break;
             }
             if (CheckBoxExample.Checked)
-                dialogString += " de " + letter.GiveExample(_rnd);
+                dialogString += " de " + letra.GiveExample(_rnd);
 
             Speak(dialogString);
         }
@@ -203,24 +203,24 @@ namespace DDUP_Proyecto
         /// <summary>
         /// El método CorrectDialog crea un diálogo aleatorio para felicitar al usuario después de ingresar la letra que se le pidió. (Solo en el modo juego).
         /// </summary>
-        /// <param name="letter">La letra que el usuario ingresó en el tablero.</param>
-        private void CorrectDialog(Letter letter)
+        /// <param name="letra">La letra que el usuario ingresó en el tablero.</param>
+        private void CorrectDialog(Letra letra)
         {
             _foundSound.Play();
             var dialog = _rnd.Next(0, 4);
             switch (dialog)
             {
                 case 0:
-                    _tts.Speak("Correcto, " + _userName + ", esa es la letra " + letter.LetterPhonetic);
+                    _tts.Speak("Correcto, " + _userName + ", esa es la letra " + letra.Fonetica);
                     break;
                 case 1:
-                    _tts.Speak("Muy bien, " + _userName + ", esa es la letra " + letter.LetterPhonetic);
+                    _tts.Speak("Muy bien, " + _userName + ", esa es la letra " + letra.Fonetica);
                     break;
                 case 2:
-                    _tts.Speak("Bien hecho, " + _userName + ", encontraste la letra " + letter.LetterPhonetic);
+                    _tts.Speak("Bien hecho, " + _userName + ", encontraste la letra " + letra.Fonetica);
                     break;
                 case 3:
-                    _tts.Speak("Perfecto, encontraste la letra " + letter.LetterPhonetic);
+                    _tts.Speak("Perfecto, encontraste la letra " + letra.Fonetica);
                     break;
             }
         }
@@ -279,7 +279,7 @@ namespace DDUP_Proyecto
 
             if (RadioButtonVowels.Checked)
             {
-                foreach (var c in _letters.Where(c => !"AEIOU".Contains(c.LetterName)))
+                foreach (var c in _letras.Where(c => !"AEIOU".Contains(c.Nombre)))
                 {
                     _pendingLetters.Remove(c);
                 }
@@ -288,9 +288,9 @@ namespace DDUP_Proyecto
             if (RadioButtonAleatorio.Checked)
                 _pendingLetters.Shuffle();
 
-            foreach (Letter c in _pendingLetters)
+            foreach (Letra c in _pendingLetters)
             {
-                Console.WriteLine(c.LetterName);
+                Console.WriteLine(c.Nombre);
             }
         }
 
@@ -339,17 +339,17 @@ namespace DDUP_Proyecto
                 newData = data.Substring(2, data.Length);
             }
 
-            var result = _letters.Find(
-                letra => letra.LetterId == newData
+            var result = _letras.Find(
+                letra => letra.ID == newData
             );
 
             if (result != null)
             {
                 if (_gameStarted)
                 {
-                    if (_expectedLetter.Equals(result))
+                    if (_expectedLetra.Equals(result))
                     {
-                        CorrectDialog(_expectedLetter);
+                        CorrectDialog(_expectedLetra);
                         switch (_selectedMode)
                         {
                             case GameMode.Alphabet when _pendingLetters.Count <= 0:
@@ -369,14 +369,14 @@ namespace DDUP_Proyecto
                     else
                     {
                         _errorSound.Play();
-                        ErrorDialog(result, _expectedLetter);
+                        ErrorDialog(result, _expectedLetra);
                     }
                 }
                 else
                 {
                     _homeSound.Play();
                     FoundDialog(result);
-                    LabelLetter.Text = "Letra actual: " + result.LetterName;
+                    LabelLetter.Text = "Letra actual: " + result.Nombre;
                     UpdateUI(result);
                 }
             }
@@ -439,50 +439,50 @@ namespace DDUP_Proyecto
         private void NewLetter()
         {
             _homeSound.Play();
-            _expectedLetter = _pendingLetters.First();
+            _expectedLetra = _pendingLetters.First();
             _pendingLetters.RemoveAt(0);
-            NewLetterDialog(_expectedLetter);
-            UpdateUI(_expectedLetter);
+            NewLetterDialog(_expectedLetra);
+            UpdateUI(_expectedLetra);
         }
 
         /// <summary>
         /// Método para hacerle saber al usuario que se le está pidiendo una nueva letra durante el minijuego.
         /// </summary>
-        /// <param name="expectedLetter">Siguiente letra que se le pedirá al usuario.</param>
-        private void NewLetterDialog(Letter expectedLetter)
+        /// <param name="expectedLetra">Siguiente letra que se le pedirá al usuario.</param>
+        private void NewLetterDialog(Letra expectedLetra)
         {
             var dialog = _rnd.Next(0, 3);
             var dialogString = "";
             switch (dialog)
             {
                 case 0:
-                    dialogString = ("Coloca la letra: " + expectedLetter.LetterPhonetic);
+                    dialogString = ("Coloca la letra: " + expectedLetra.Fonetica);
                     break;
                 case 1:
-                    dialogString = (_userName + ", busca la letra: " + expectedLetter.LetterPhonetic + ".");
+                    dialogString = (_userName + ", busca la letra: " + expectedLetra.Fonetica + ".");
                     break;
                 case 2:
-                    dialogString = ("Necesitamos la letra: " + expectedLetter.LetterPhonetic);
+                    dialogString = ("Necesitamos la letra: " + expectedLetra.Fonetica);
                     break;
             }
             if (CheckBoxExample.Checked)
-                dialogString += " de " + expectedLetter.GiveExample(_rnd);
+                dialogString += " de " + expectedLetra.GiveExample(_rnd);
             Speak(dialogString);
         }
 
         /// <summary>
         /// Método para actualizar el texto y los puntos de Braille en la interfaz de usuario.
         /// </summary>
-        /// <param name="letter">Letra que se le pide al usuario en el modo juego o que el usuario coloca en el modo práctica.</param>
-        private void UpdateUI(Letter letter)
+        /// <param name="letra">Letra que se le pide al usuario en el modo juego o que el usuario coloca en el modo práctica.</param>
+        private void UpdateUI(Letra letra)
         {
-            LabelLetter.Text = "Letra actual: " + letter.LetterName;
-            braille1.Visible = letter.BrailleEsp.Contains("1");
-            braille2.Visible = letter.BrailleEsp.Contains("2");
-            braille3.Visible = letter.BrailleEsp.Contains("3");
-            braille4.Visible = letter.BrailleEsp.Contains("4");
-            braille5.Visible = letter.BrailleEsp.Contains("5");
-            braille6.Visible = letter.BrailleEsp.Contains("6");
+            LabelLetter.Text = "Letra actual: " + letra.Nombre;
+            braille1.Visible = letra.PuntosBraille.Contains("1");
+            braille2.Visible = letra.PuntosBraille.Contains("2");
+            braille3.Visible = letra.PuntosBraille.Contains("3");
+            braille4.Visible = letra.PuntosBraille.Contains("4");
+            braille5.Visible = letra.PuntosBraille.Contains("5");
+            braille6.Visible = letra.PuntosBraille.Contains("6");
         }
 
         /// <summary>
@@ -531,11 +531,11 @@ namespace DDUP_Proyecto
         {
             if (ComboBoxRangeA.SelectedIndex > ComboBoxRangeB.SelectedIndex)
             {
-                ComboBoxRangeB.SelectedIndex = ComboBoxRangeA.SelectedIndex < _letters.Count - 1 ? ComboBoxRangeA.SelectedIndex + 1 : ComboBoxRangeA.SelectedIndex;
+                ComboBoxRangeB.SelectedIndex = ComboBoxRangeA.SelectedIndex < _letras.Count - 1 ? ComboBoxRangeA.SelectedIndex + 1 : ComboBoxRangeA.SelectedIndex;
             }
 
             if (ComboBoxRangeA.SelectedIndex != ComboBoxRangeB.SelectedIndex) return;
-            if (ComboBoxRangeB.SelectedIndex < _letters.Count - 1)
+            if (ComboBoxRangeB.SelectedIndex < _letras.Count - 1)
             {
                 ComboBoxRangeB.SelectedIndex += 1;
             }
@@ -634,21 +634,21 @@ namespace DDUP_Proyecto
     ///  Esta clase se utiliza para guardar la información de los identificadores de las tarjetas RFID, 
     ///  cómo se pronuncian las letras de manera correcta, cuáles son los puntos de Braille que utiliza, etc.
     /// </summary>
-    internal class Letter : IEquatable<Letter>
+    internal class Letra : IEquatable<Letra>
     {
-        public char LetterName { get; set; }
-        public string LetterId { get; set; }
-        public string[] LetterExample { get; set; }
-        public string LetterPhonetic { get; set; }
-        public string BrailleEsp { get; set; }
+        public char Nombre { get; set; }
+        public string ID { get; set; }
+        public string[] Ejemplos { get; set; }
+        public string Fonetica { get; set; }
+        public string PuntosBraille { get; set; }
 
         public override string ToString()
         {
-            return "ID: " + LetterId + "   Name: " + LetterName + "     Phonetic: " + LetterPhonetic;
+            return "ID: " + ID + "   Name: " + Nombre + "     Phonetic: " + Fonetica;
         }
         public override bool Equals(object obj)
         {
-            var objAsPart = obj as Letter;
+            var objAsPart = obj as Letra;
             return objAsPart != null && Equals(objAsPart);
         }
         public override int GetHashCode()
@@ -660,16 +660,16 @@ namespace DDUP_Proyecto
         /// </summary>
         /// <param name="other">La otra letra.</param>
         /// <returns>Verdadero si es la misma letra, Falso si es null o una letra distinta.</returns>
-        public bool Equals(Letter other)
+        public bool Equals(Letra other)
         {
-            return LetterId != null && other != null && LetterId.Equals(other.LetterId);
+            return ID != null && other != null && ID.Equals(other.ID);
         }
         /// <summary>
         /// Método para dar un ejemplo de una palabra que comience con la letra creada.
         /// </summary>
         /// <param name="rnd">Variable aleatoria.</param>
         /// <returns>Un string con la palabra de ejemplo.</returns>
-        public string GiveExample(Random rnd) => LetterExample[rnd.Next(0, LetterExample.Length)];
+        public string GiveExample(Random rnd) => Ejemplos[rnd.Next(0, Ejemplos.Length)];
     }
 }
 

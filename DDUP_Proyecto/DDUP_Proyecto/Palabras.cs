@@ -13,7 +13,7 @@ namespace DDUP_Proyecto
     public partial class Palabras : MetroForm
     {
         private readonly string TAG = "Palabras.cs: ";
-        Cereal sp2;
+        PuertoSerial sp2;
         SpeechSynthesizer TTS = new SpeechSynthesizer();
 
         SoundPlayer ErrorSound = new SoundPlayer(Properties.Resources.Error);
@@ -194,7 +194,7 @@ namespace DDUP_Proyecto
             Words.Add(new Word() { WordName = "Tía", WordPhonetic = "Tía", WordId = "45 71 E8 2E" });
         }
 
-        public Palabras(Cereal sp2, MetroThemeStyle theme)
+        public Palabras(PuertoSerial sp2, MetroThemeStyle theme)
         {
             InitializeComponent();
             CheckBoxExample.ResetText();

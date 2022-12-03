@@ -17,13 +17,13 @@ namespace DDUP_Proyecto
 
     public delegate void LineReceivedEventHandler(object sender, LineReceivedEventArgs args);
 
-    public class Cereal : IDisposable
+    public class PuertoSerial
     {
         private readonly SerialPort _serialPort;
 
         public event LineReceivedEventHandler LineReceived;
 
-        public Cereal()
+        public PuertoSerial()
         {
             _serialPort = new SerialPort();
             _serialPort.DataReceived += serialPort_DataReceived;
@@ -37,7 +37,7 @@ namespace DDUP_Proyecto
             _serialPort.DataBits = 8;
             _serialPort.ReadBufferSize = 409600;
             _serialPort.NewLine = "F";
-            _serialPort.ReadTimeout = 1000;  // When using ReadLine it is good to set a timeout.
+            _serialPort.ReadTimeout = 1000;
             _serialPort.Open();
         }
 
@@ -53,28 +53,12 @@ namespace DDUP_Proyecto
 
         private void serialPort_DataReceived(object s, SerialDataReceivedEventArgs e)
         {
-            /*
-            byte[] data = new byte[serialPort.BytesToRead];
-            serialPort.Read(data, 0, data.Length);
-            data.ToList().ForEach(b => recievedData.Enqueue(b));
-            processData();
-
-            //raise event here
-            */
 
             if (_serialPort.BytesToRead > 13)
             {
-                if (this.LineReceived != null)
+                if (LineReceived != null)
                     LineReceived(this, new LineReceivedEventArgs(_serialPort.ReadExisting()));
             }
-
-
-        }
-
-        public void Dispose()
-        {
-            if (_serialPort != null)
-                _serialPort.Dispose();
         }
 
         public void WriteLine(string text)
